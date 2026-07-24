@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { ThemeProvider } from '@/providers/theme-provider';
 import { QueryProvider } from '@/providers/query-provider';
 import { AuthProvider } from '@/providers/auth-provider';
@@ -35,14 +36,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen antialiased">
-        <ThemeProvider>
-          <QueryProvider>
-            <AuthProvider>
-              {children}
-              <AIChatWrapper />
-            </AuthProvider>
-          </QueryProvider>
-        </ThemeProvider>
+        <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
+          <ThemeProvider>
+            <QueryProvider>
+              <AuthProvider>
+                {children}
+                <AIChatWrapper />
+              </AuthProvider>
+            </QueryProvider>
+          </ThemeProvider>
+        </GoogleOAuthProvider>
       </body>
     </html>
   );

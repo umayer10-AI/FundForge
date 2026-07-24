@@ -113,16 +113,6 @@ export default function Navbar() {
                     )}
                   </AnimatePresence>
                 </div>
-
-                <a
-                  href="https://github.com/anomalyco/opencode"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-ghost text-sm flex items-center gap-1"
-                >
-                  <ExternalLink className="w-3 h-3" />
-                  Join as Developer
-                </a>
               </div>
             ) : (
               <div className="hidden md:flex items-center gap-2">
@@ -132,15 +122,6 @@ export default function Navbar() {
                 <Link href="/register" className="btn-primary text-sm !py-2.5 !px-5">
                   Get Started
                 </Link>
-                <a
-                  href="https://github.com/anomalyco/opencode"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-ghost text-sm flex items-center gap-1"
-                >
-                  <ExternalLink className="w-3 h-3" />
-                  Join as Developer
-                </a>
               </div>
             )}
 
@@ -188,14 +169,6 @@ export default function Navbar() {
                   <Link href={getDashboardLink()} className="block px-4 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-sm font-medium" onClick={() => setIsMobileOpen(false)}>
                     Dashboard
                   </Link>
-                  <a
-                    href="https://github.com/anomalyco/opencode"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block px-4 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-sm font-medium"
-                  >
-                    <ExternalLink className="w-3 h-3 inline" /> Join as Developer
-                  </a>
                   <button onClick={() => { logout(); setIsMobileOpen(false); }} className="w-full text-left px-4 py-3 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 text-sm font-medium">
                     Logout
                   </button>
@@ -208,14 +181,6 @@ export default function Navbar() {
                   <Link href="/register" className="block px-4 py-3 rounded-xl text-sm font-medium" onClick={() => setIsMobileOpen(false)}>
                     <span className="btn-primary w-full text-center inline-block">Get Started</span>
                   </Link>
-                  <a
-                    href="https://github.com/anomalyco/opencode"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block px-4 py-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-sm font-medium"
-                  >
-                    <ExternalLink className="w-3 h-3 inline" /> Join as Developer
-                  </a>
                 </>
               )}
             </div>
@@ -225,3 +190,4 @@ export default function Navbar() {
     </nav>
   );
 }
+

@@ -2,7 +2,7 @@ import { config } from '../config';
 import { logger } from '../utils/logger';
 
 interface AIRequestOptions {
-  prompt: string;
+  prompt?: string;
   systemPrompt?: string;
   temperature?: number;
   maxTokens?: number;
@@ -27,7 +27,7 @@ Fix grammar, spelling, punctuation, and improve readability while preserving the
 };
 
 export const aiService = {
-  async generate(prompt: string, options: AIRequestOptions = { prompt: '' }) {
+  async generate(prompt: string, options: AIRequestOptions = {}) {
     const fullPrompt = options.prompt || prompt;
     const systemPrompt = options.systemPrompt || SYSTEM_PROMPTS['campaign-writer'];
     const temperature = options.temperature ?? 0.7;
@@ -35,7 +35,7 @@ export const aiService = {
 
     try {
       if (!config.grok.apiKey) {
-        logger.warn('Grok API key not configured');
+        logger.warn('Groq API key not configured');
         return { success: false, message: 'AI service not configured', data: null };
       }
 
@@ -46,7 +46,7 @@ export const aiService = {
           'Authorization': `Bearer ${config.grok.apiKey}`,
         },
         body: JSON.stringify({
-          model: 'mixtral-8x7b-32768',
+          model: 'llama-3.3-70b-versatile',
           messages: [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: fullPrompt },
@@ -68,7 +68,7 @@ export const aiService = {
         return { success: false, message, data: null };
       }
 
-      const result = await response.json();
+      const result: any = await response.json();
       return {
         success: true,
         message: 'Success',

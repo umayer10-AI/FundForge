@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
+import Cookies from 'js-cookie';
 import { User } from '@/types';
 import { authApi } from '@/lib/api';
 
@@ -53,6 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(newUser);
     localStorage.setItem('token', newToken);
     localStorage.setItem('user', JSON.stringify(newUser));
+    Cookies.set('session_token', newToken, { expires: 7, path: '/' });
   }, []);
 
   const logout = useCallback(() => {
@@ -60,6 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    Cookies.remove('session_token', { path: '/' });
     window.location.href = '/';
   }, []);
 

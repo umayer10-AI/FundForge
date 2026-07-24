@@ -100,7 +100,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const markAsRead = async (id: string) => {
     try {
-      await notificationApi.markRead(id);
+      await notificationApi.markAsRead(id);
       setNotifCount(prev => Math.max(0, prev - 1));
       setNotifications(prev => prev.map(n => n._id === id ? { ...n, isRead: true } : n));
     } catch { /* ignore */ }

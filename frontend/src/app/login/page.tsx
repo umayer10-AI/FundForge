@@ -1,15 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Rocket } from 'lucide-react';
+import { useGoogleLogin } from '@react-oauth/google';
 import { useAuth } from '@/providers/auth-provider';
 import { authApi } from '@/lib/api';
 import { motion } from 'framer-motion';
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { login } = useAuth();
   const [form, setForm] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
@@ -25,7 +27,8 @@ export default function LoginPage() {
       const res = await authApi.login(form);
       if (res.data.success) {
         login(res.data.data.token, res.data.data.user);
-        router.push(`/dashboard/${res.data.data.user.role}`);
+        const redirect = `/dashboard/${res.data.data.user.role}`;
+        router.push(redirect);
       }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Login failed. Please try again.');
@@ -34,9 +37,25 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleLogin = () => {
-    setError('Google OAuth would redirect here. In production, redirect to backend OAuth endpoint.');
-  };
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setLoading(true);
+      setError('');
+      try {
+        const res = await authApi.googleAuth({ access_token: tokenResponse.access_token });
+        if (res.data.success) {
+          login(res.data.data.token, res.data.data.user);
+          const redirect = `/dashboard/${res.data.data.user.role}`;
+          router.push(redirect);
+        }
+      } catch (err: any) {
+        setError(err.response?.data?.message || 'Google login failed');
+      } finally {
+        setLoading(false);
+      }
+    },
+    onError: () => setError('Google login failed'),
+  });
 
   return (
     <div className="min-h-screen flex">
@@ -116,9 +135,6 @@ export default function LoginPage() {
                 <input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-primary-500 focus:ring-primary-500" />
                 <span className="text-sm text-slate-600 dark:text-slate-400">Remember me</span>
               </label>
-              <Link href="/forgot-password" className="text-sm text-primary-500 hover:text-primary-600 font-medium">
-                Forgot Password?
-              </Link>
             </div>
 
             <button type="submit" disabled={loading} className="btn-primary w-full !py-3.5">
@@ -144,7 +160,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <button onClick={handleGoogleLogin} className="btn-secondary w-full !py-3.5">
+          <button onClick={() => handleGoogleLogin()} disabled={loading} className="btn-secondary w-full !py-3.5">
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
               <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -156,5 +172,17 @@ export default function LoginPage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }
